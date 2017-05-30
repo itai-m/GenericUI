@@ -40,10 +40,14 @@ public class LevelSelector : Singleton<LevelSelector> {
         RectTransform levelsCanvasTransform = levelsCanvas.GetComponent<RectTransform>();
         float midPanelHight = levelsCanvasTransform.rect.height / 2;
         if (side == Side.Left) {
-
+            GameObject button = GameObjectUtil.Instantiate(moveWorldLeftButton, new Vector2(), levelsCanvas.transform);
+            setRectTransform(button.GetComponent<RectTransform>(), new Vector2(0, -midPanelHight), new Vector2(offsetWide, offsetWide));
         } else {
-
+            GameObject button = GameObjectUtil.Instantiate(moveWorldRightButton, new Vector2(), levelsCanvas.transform);
+            setRectTransform(button.GetComponent<RectTransform>(), new Vector2(levelsCanvasTransform.rect.width, -midPanelHight), new Vector2(offsetWide, offsetWide));
+            
         }
+        
     }
 
     private void buildWorldWithSideButton(int levelNumber) {
