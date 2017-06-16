@@ -1,25 +1,37 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 public class Buttons : MonoBehaviour {
-    public string levelSelectName = "LevelSelector";
-    public string firstLevelName = "level001";
 
-    public void StartGame() {
-        //if (state exist)
-        //LoadGame();
-        //else
-        SceneManager.LoadScene(firstLevelName, LoadSceneMode.Additive);
+    public void LoadLevelSelector() {
+        UIManager.Instance.LoadLevelSelector();
     }
 
-    public void LoadGame() {
-        //load from saved state
+    public void LoadSettingScreen() {
+        UIManager.Instance.LoadSettingScreen();
+    }
+
+    public void LoadMainScreen() {
+        UIManager.Instance.LoadMainMenu();
+    }
+
+    public void PauseAndGoMenu() {
+        UIManager.Instance.PauseGameAndReturnToMain();
+    }
+
+    public void ResumeAndGoGame() {
+        UIManager.Instance.ResumeGameAndReturnToGameScreen();
     }
 
     public void LevelSelect() {
-        SceneManager.LoadScene(levelSelectName, LoadSceneMode.Single);
+        
+    }
+
+    public void nextWorld() {
+        LevelSelector.Instance.nextWorld();
+    }
+
+    public void prevWorld() {
+        LevelSelector.Instance.previsWorld();
     }
 
 }

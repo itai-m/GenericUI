@@ -8,9 +8,10 @@ public class LevelSelector : Singleton<LevelSelector> {
 
     private enum Side {Left, Right };
     private int currentWorldLevel;
+    private bool isPortrait;
 
-    public int maxLevelInRow = 5;
-    public int maxLevelInCol = 3;
+    public int maxLevelInRow = 3;
+    public int maxLevelInCol = 5;
 
     public float offsetHight = 15;
     public float offsetWide = 15;
@@ -21,14 +22,18 @@ public class LevelSelector : Singleton<LevelSelector> {
     public GameObject levelButton;
     public GameObject moveWorldLeftButton;
     public GameObject moveWorldRightButton;
+    public GameObject goBackButton;
     public Canvas levelsCanvas;
+    public Text titleText;
+
 
     private List<LevelWorld> allWorld;
 
 	// Use this for initialization
 	void Start () {
+        isPortrait = Screen.orientation == ScreenOrientation.Portrait;
         currentWorldLevel = 0;
-        allWorld = GameManager.Instance.GetWorldLevel();
+        allWorld = UIManager.Instance.GetWorldLevel();
         if (allWorld.Count > 0) {
             buildWorldWithSideButton(0);
         } else {
@@ -44,24 +49,38 @@ public class LevelSelector : Singleton<LevelSelector> {
             setRectTransform(button.GetComponent<RectTransform>(), new Vector2(0, -midPanelHight), new Vector2(offsetWide, offsetWide));
         } else {
             GameObject button = GameObjectUtil.Instantiate(moveWorldRightButton, new Vector2(), levelsCanvas.transform);
-            setRectTransform(button.GetComponent<RectTransform>(), new Vector2(levelsCanvasTransform.rect.width, -midPanelHight), new Vector2(offsetWide, offsetWide));
+            setRectTransform(button.GetComponent<RectTransform>(), new Vector2(levelsCanvasTransform.rect.width - offsetWide, -midPanelHight), new Vector2(offsetWide, offsetWide));
             
         }
         
     }
 
     private void buildWorldWithSideButton(int levelNumber) {
+        cleanCanvas();
         BuildWorld(allWorld[levelNumber]);
-        if (levelNumber < allWorld.Count) {
+        if (levelNumber < allWorld.Count -1) {
             placingSideButton(Side.Right);
         }
         if (levelNumber > 0) {
             placingSideButton(Side.Left);
         }
-        
+        AddGoBackButton();
+    }
+    
+    private void AddGoBackButton() {
+        GameObject title = GameObjectUtil.Instantiate(goBackButton.gameObject, Vector2.zero, levelsCanvas.transform);
+        setRectTransform(title.GetComponent<RectTransform>(), Vector2.zero, new Vector2(0, offsetHight));
+    }
+
+    private void setTitleText(string text, float size) {
+        GameObject title = GameObjectUtil.Instantiate(titleText.gameObject, Vector2.zero, levelsCanvas.transform);
+        title.GetComponent<Text>().text = text;
+        setRectTransform(title.GetComponent<RectTransform>(), Vector2.zero, new Vector2(0, offsetHight));
+        //title.GetComponent<RectTransform>().sizeDelta = new Vector2(0, offsetHight);
     }
 
     private void BuildWorld(LevelWorld levelWolrld) {
+        
         int maxLevel =levelWolrld.levelCount;
         RectTransform levelsCanvasTransform = levelsCanvas.GetComponent<RectTransform>();
         float newPanelHight = levelsCanvasTransform.rect.height - (offsetHight * 2);
@@ -71,20 +90,23 @@ public class LevelSelector : Singleton<LevelSelector> {
         float buttonWide = newPanelWidth * buttonSpaceRelWide / maxLevelInRow;
         float offsetBetweenButtonWide = (newPanelWidth - (buttonWide * maxLevelInRow)) / (maxLevelInRow - 1);
         Vector2 buttonSize = new Vector2(buttonWide, buttonHight);
+        setTitleText(levelWolrld.worldName, 0);
         for (int i = 0; i < maxLevel; i++) {
             PlaceLevelButton(
                 new Vector2(
                     offsetWide + ((i % maxLevelInRow) * (offsetBetweenButtonWide + buttonWide)), 
                     -1 * (offsetHight + (Mathf.Floor( i / maxLevelInRow) * (offsetBetweenButtonHight + buttonHight)))), 
-                    buttonSize, i);
+                    buttonSize, levelWolrld, i);
         }
         //Set the UI of the level selection
     }
 
-    private void PlaceLevelButton(Vector2 pos, Vector2 size, int number) {
+    private void PlaceLevelButton(Vector2 pos, Vector2 size,LevelWorld levelWorld, int Levelnumber) {
         GameObject button = GameObjectUtil.Instantiate(levelButton, pos, levelsCanvas.transform);
         setRectTransform(button.GetComponent<RectTransform>(), pos, size);
-        button.GetComponentInChildren<Text>().text = number.ToString();
+        button.GetComponentInChildren<Text>().text = Levelnumber.ToString();
+        Button b = button.GetComponent<Button>();
+        b.onClick.AddListener(() => clickLevel(levelWorld, Levelnumber));
     }
 
     private void setRectTransform(RectTransform rect, Vector2 pos, Vector2 size) {
@@ -93,16 +115,18 @@ public class LevelSelector : Singleton<LevelSelector> {
         rect.sizeDelta = size;
     }
 
-    public void clickLevel(int level) {
-        GameManager.Instance.Startlevel(level);
+    public void clickLevel(LevelWorld world, int level) {
+        UIManager.Instance.Startlevel(world, level);
     }
 
     public void nextWorld() {
-        BuildWorld(allWorld[++currentWorldLevel]);
+        Debug.Log("nextWorld");
+        buildWorldWithSideButton(++currentWorldLevel);
     }
 
     public void previsWorld() {
-        BuildWorld(allWorld[--currentWorldLevel]);
+        Debug.Log("previsWorld");
+        buildWorldWithSideButton(--currentWorldLevel);
     }
 
     void Update() {
@@ -111,6 +135,18 @@ public class LevelSelector : Singleton<LevelSelector> {
         }
         else if (Input.deviceOrientation == DeviceOrientation.Portrait) {
             Debug.Log("Portrait");
+        }
+        if (!isPortrait && Screen.orientation == ScreenOrientation.Portrait) {
+            Debug.Log("Portrait");
+        }
+        else if (isPortrait && Screen.orientation == ScreenOrientation.Landscape) {
+            Debug.Log("LandscapeLeft");
+        }
+    }
+
+    private void cleanCanvas() {
+        foreach (Transform child in levelsCanvas.transform) {
+            GameObjectUtil.Destroy(child.gameObject);
         }
     }
 

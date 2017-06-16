@@ -13,7 +13,7 @@ public class LevelButton : MonoBehaviour {
     }
 
     public void OnClick() {
-        LevelSelector.Instance.clickLevel(level);
+        //LevelSelector.Instance.clickLevel(level);
     }
 
 }
