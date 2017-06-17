@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public abstract class UIManager : Singleton<UIManager> {
+public class UIManager : Singleton<UIManager> {
     protected UIManager() { }
 
     private const string levelSelectorName = "LevelSelector";
@@ -15,7 +15,7 @@ public abstract class UIManager : Singleton<UIManager> {
     private float timeScale;
     private Scene gameScene;
 
-    public LevelCretion levelCretion;
+    public LevelData levelCretion;
 
     public Setting Settings {
         get { return setting; }
@@ -35,11 +35,19 @@ public abstract class UIManager : Singleton<UIManager> {
     public void Awake() {
         DontDestroyOnLoad(transform.gameObject);
         LoadSetting();
+        levelCretion = GetComponent<LevelData>();
+        if (levelCretion == null) {
+            Debug.Log("You must add implemtion of LevelCretion to ");
+        }
     }
 
-    public abstract void Startlevel(LevelWorld world, int level);
+    public void Startlevel(LevelWorld world, int level) {
+        levelCretion.Startlevel(world, level);
+    }
 
-    public abstract List<LevelWorld> GetWorldLevel();
+    public List<LevelWorld> GetWorldLevel() {
+        return levelCretion.GetWorldLevel();
+    }
 
     public bool isOneLevelGame = false;
 
