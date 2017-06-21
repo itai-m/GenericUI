@@ -64,6 +64,14 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
     /// So, this was made to be sure we're not creating that buggy ghost object.
     /// </summary>
     public void OnDestroy() {
+        
+    }
+
+    public void OnApplicationQuit() {
         applicationIsQuitting = true;
+    }
+
+    public bool alreadyCreateInstance() {
+        return _instance != null;
     }
 }

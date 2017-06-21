@@ -14,12 +14,12 @@ public class Buttons : MonoBehaviour {
         UIManager.Instance.LoadMainMenu();
     }
 
-    public void PauseAndGoMenu() {
-        UIManager.Instance.PauseGameAndReturnToMain();
+    public void PauseGame() {
+        UIManager.Instance.PauseGame();
     }
 
-    public void ResumeAndGoGame() {
-        UIManager.Instance.ResumeGameAndReturnToGameScreen();
+    public void ResumeGame() {
+        UIManager.Instance.ResuemGame();
     }
 
     public void LevelSelect() {
@@ -32,6 +32,10 @@ public class Buttons : MonoBehaviour {
 
     public void prevWorld() {
         LevelSelector.Instance.previsWorld();
+    }
+
+    public void OpenPauseMenu() {
+
     }
 
 }

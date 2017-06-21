@@ -14,6 +14,16 @@ public class TestGameMangert : MonoBehaviour , LevelData  {
         return allLevels;
     }
 
+    public bool PauseGame() {
+        UIManager.Instance.IsPause = true;
+        return false;
+    }
+
+    public bool ResuemGame() {
+        UIManager.Instance.IsPause = false;
+        return false;
+    }
+
     public void Startlevel(LevelWorld world, int level) {
         Debug.Log("Start World: " + world + ", Level: " + level);
         SceneManager.LoadScene("TestScene");
