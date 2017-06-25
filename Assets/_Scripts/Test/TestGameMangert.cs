@@ -14,6 +14,10 @@ public class TestGameMangert : MonoBehaviour , LevelData  {
         return allLevels;
     }
 
+    public bool isLevelOpen(LevelWorld world, int level) {
+        return level == 0;
+    }
+
     public bool PauseGame() {
         UIManager.Instance.IsPause = true;
         return false;

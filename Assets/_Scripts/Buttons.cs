@@ -22,6 +22,10 @@ public class Buttons : MonoBehaviour {
         UIManager.Instance.ResuemGame();
     }
 
+    public void CurrentLevelCompleted() {
+        UIManager.Instance.CurrentLevelCompleted();
+    }
+
     public void LevelSelect() {
         
     }

@@ -101,12 +101,23 @@ public class LevelSelector : Singleton<LevelSelector> {
         //Set the UI of the level selection
     }
 
-    private void PlaceLevelButton(Vector2 pos, Vector2 size,LevelWorld levelWorld, int Levelnumber) {
+    private void PlaceLevelButton(Vector2 pos, Vector2 size,LevelWorld levelWorld, int levelnumber) {
         GameObject button = GameObjectUtil.Instantiate(levelButton, pos, levelsCanvas.transform);
         setRectTransform(button.GetComponent<RectTransform>(), pos, size);
-        button.GetComponentInChildren<Text>().text = Levelnumber.ToString();
+
+        if (UIManager.Instance.isLevelCompleted(levelWorld, levelnumber)) {
+            button.GetComponentInChildren<Text>().text = levelnumber.ToString();
+            button.transform.GetChild(1).gameObject.SetActive(false);
+        } else if (UIManager.Instance.isLevelOpen(levelWorld, levelnumber)) {
+            button.GetComponentInChildren<Text>().text = levelnumber.ToString();
+            button.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else {
+            button.GetComponentInChildren<Text>().text = "X";
+        }
+
         Button b = button.GetComponent<Button>();
-        b.onClick.AddListener(() => clickLevel(levelWorld, Levelnumber));
+        b.onClick.AddListener(() => clickLevel(levelWorld, levelnumber));
     }
 
     private void setRectTransform(RectTransform rect, Vector2 pos, Vector2 size) {

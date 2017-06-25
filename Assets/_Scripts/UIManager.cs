@@ -14,6 +14,10 @@ public class UIManager : Singleton<UIManager> {
     private Setting setting;
     private float timeScale;
     private Scene gameScene;
+    public SavedProgression savedProgression;
+
+    private LevelWorld currentWorld;
+    private int currentLevel;
 
     public LevelData levelCretion;
 
@@ -33,22 +37,33 @@ public class UIManager : Singleton<UIManager> {
     }
 
     void Awake() {
-
-        initUIManager();
-        DontDestroyOnLoad(gameObject);
-        
+        if (alreadyCreateInstance()) {
+            Destroy(gameObject);
+        }
+        else {
+            initUIManager();
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
     private void initUIManager() {
         LoadSetting();
+        savedProgression = GetComponent<SavedProgression>();
+        loadSave();
         levelCretion = GetComponent<LevelData>();
         if (levelCretion == null) {
             Debug.Log("You must add implemtion of LevelData to ");
         }
     }
 
+    private void loadSave() {
+        savedProgression.load();
+    } 
+
     public void Startlevel(LevelWorld world, int level) {
         levelCretion.Startlevel(world, level);
+        currentLevel = level;
+        currentWorld = world;
     }
 
     public List<LevelWorld> GetWorldLevel() {
@@ -108,6 +123,24 @@ public class UIManager : Singleton<UIManager> {
 
     public void LoadSetting() {
         setting = new Setting();
+    }
+
+    public void levelComplete(LevelWorld world, int level) {
+        savedProgression.LevelCompleted(world, level);
+        savedProgression.Save();
+    }
+
+    public void CurrentLevelCompleted() {
+        savedProgression.LevelCompleted(currentWorld, currentLevel);
+        savedProgression.Save();
+    }
+
+    public bool isLevelCompleted(LevelWorld world, int level) {
+        return savedProgression.IsLevelCompleted(world, level);
+    }
+
+    public bool isLevelOpen(LevelWorld world, int level) {
+        return levelCretion.isLevelOpen(world, level);
     }
 
 }

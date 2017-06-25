@@ -10,4 +10,6 @@ public interface LevelData {
 
     bool ResuemGame();
 
+    bool isLevelOpen(LevelWorld world, int level);
+
 }
